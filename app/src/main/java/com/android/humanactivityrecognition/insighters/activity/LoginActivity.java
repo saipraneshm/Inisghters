@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.android.humanactivityrecognition.insighters.R;
+import com.android.humanactivityrecognition.insighters.fragment.CreateAccountDialogFragment;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -79,9 +81,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ActivityHelper.initialize(this);
+
+        //The following code is to set full screen
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
+
+        //making the support action bar invisible.
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
@@ -106,6 +112,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+
+        Button mCreateAccountButton = (Button) findViewById(R.id.create_account_button);
+        mCreateAccountButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getSupportFragmentManager();
+                CreateAccountDialogFragment dialogFragment =
+                        CreateAccountDialogFragment.newIntent(LoginActivity.this);
+                dialogFragment.show(fm,"SIGN_UP_OPTIONS");
             }
         });
 

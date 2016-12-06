@@ -1,43 +1,41 @@
 package com.android.humanactivityrecognition.insighters.model;
 
-import java.util.List;
-
-/**
- * Created by sai pranesh on 29-Nov-16.
- */
+import java.util.Map;
 
 public class SensorInformation {
-    private List<String> mCoordinates;
-    private String mCreationTime;
+    private Map<String, Double> mCoordinates;
+    private Long mCreation_time;
     private String mEndTime;
+    private String mState;
+    private Map<String, Double> mLocation;
 
     public SensorInformation(){}
 
-    public SensorInformation(List<String> coordinates, String creationTime){
+    public SensorInformation(Map<String, Double> coordinates, Long creationTime){
         mCoordinates = coordinates;
-        mCreationTime = creationTime;
+        mCreation_time = creationTime;
     }
 
-    public SensorInformation(List<String> coordinates, String creationTime, String endTime){
+    public SensorInformation(Map<String, Double> coordinates, Long creationTime, String endTime){
         mCoordinates = coordinates;
-        mCreationTime = creationTime;
+        mCreation_time = creationTime;
         mEndTime = endTime;
     }
 
-    public List<String> getCoordinates() {
+    public Map<String, Double> getCoordinates() {
         return mCoordinates;
     }
 
-    public void setCoordinates(List<String> coordinates) {
+    public void setCoordinates(Map<String, Double> coordinates) {
         mCoordinates = coordinates;
     }
 
-    public String getCreationTime() {
-        return mCreationTime;
+    public Long getCreation_time() {
+        return mCreation_time;
     }
 
-    public void setCreationTime(String creationTime) {
-        mCreationTime = creationTime;
+    public void setCreation_time(Long creation_time) {
+        mCreation_time = creation_time;
     }
 
     public String getEndTime() {
@@ -46,5 +44,21 @@ public class SensorInformation {
 
     public void setEndTime(String endTime) {
         mEndTime = endTime;
+    }
+
+    public String getState() {
+        return mState;
+    }
+
+    public void setState(String state) {
+        mState = state;
+    }
+
+    public Map<String, Double> getLocation() {
+        return mLocation;
+    }
+
+    public void setLocation(Map<String, Double> location) {
+        mLocation = location;
     }
 }

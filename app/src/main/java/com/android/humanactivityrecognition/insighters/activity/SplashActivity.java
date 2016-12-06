@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.android.humanactivityrecognition.insighters.helperclasses.SensorManagementActivity;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -11,7 +12,8 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startActivity(LoginActivity.newIntent(this));
+        //startActivity(LoginActivity.newIntent(this));
+        startActivity(new Intent(this, SensorManagementActivity.class));
         finish();
     }
 }
