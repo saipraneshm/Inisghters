@@ -15,7 +15,7 @@
         android:padding="15dp"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="50dp"/>
+        android:layout_marginBottom="30dp"/>
 
     <LinearLayout
         android:id="@+id/sign_in_buttons_ll"
@@ -43,58 +43,63 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/sign_up_form_ll"
+    <ScrollView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <EditText
-            android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/sign_up_form_ll"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/first_name_edit_text"
-            android:hint="First Name"
-            android:layout_marginBottom="10dp"/>
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/last_name_edit_text"
-            android:hint="Last Name"
-            android:layout_marginBottom="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/first_name_edit_text"
+                android:hint="First Name"
+                android:layout_marginBottom="10dp"/>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:ems="10"
-            android:id="@+id/email_edit_text"
-            android:hint="Email Address"
-            android:layout_marginBottom="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/last_name_edit_text"
+                android:hint="Last Name"
+                android:layout_marginBottom="10dp"/>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:ems="10"
-            android:id="@+id/contact_phone_edit_text"
-            android:hint="Phone Number"
-            android:layout_marginBottom="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:ems="10"
+                android:id="@+id/email_edit_text"
+                android:hint="Email Address"
+                android:layout_marginBottom="10dp"/>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/password_edit_text"
-            android:hint="Password"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:ems="10"
+                android:id="@+id/contact_phone_edit_text"
+                android:hint="Phone Number"
+                android:layout_marginBottom="10dp"/>
 
-    </LinearLayout>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/password_edit_text"
+                android:hint="Password"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

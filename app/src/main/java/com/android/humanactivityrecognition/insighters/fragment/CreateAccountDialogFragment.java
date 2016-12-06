@@ -2,11 +2,9 @@ package com.android.humanactivityrecognition.insighters.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,16 +14,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.humanactivityrecognition.insighters.R;
+import com.android.humanactivityrecognition.insighters.activity.LoginActivity;
+import com.android.humanactivityrecognition.insighters.fragment.base.DialogFragmentBase;
+import com.android.humanactivityrecognition.insighters.helperclasses.database.DbManager;
 import com.android.humanactivityrecognition.insighters.model.UserProfileInformation;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
-import org.w3c.dom.Text;
+import io.realm.Realm;
 
 /**
  * Created by sai pranesh on 05-Dec-16.
  */
 
-public class CreateAccountDialogFragment extends DialogFragment {
+public class CreateAccountDialogFragment extends DialogFragmentBase {
 
 
     private Button mEmailSignIn;
@@ -33,6 +33,13 @@ public class CreateAccountDialogFragment extends DialogFragment {
     private LinearLayout mUserSingUp, mUserSignIn;
     private AlertDialog.Builder builder;
     private EditText mFirstName, mLastName, mEmail, mPassword, mContact;
+    private OnAccountCreation mAccountCreation;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     public static CreateAccountDialogFragment newIntent(Context context){
         Bundle args = new Bundle();
@@ -104,7 +111,10 @@ public class CreateAccountDialogFragment extends DialogFragment {
                 profileInformation.setLastName(lastName);
                 profileInformation.setEmail(email);
                 profileInformation.setPhone(Integer.getInteger(phoneNo));
+                profileInformation.setPassword(password);
 
+                getDbManager().saveProfileInformation(profileInformation);
+                mAccountCreation.saveAccountInformation(profileInformation);
 
             }
         });
@@ -118,5 +128,16 @@ public class CreateAccountDialogFragment extends DialogFragment {
 
     public interface OnAccountCreation{
         void saveAccountInformation(UserProfileInformation userProfileInformation);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if( context instanceof LoginActivity){
+            mAccountCreation = (LoginActivity) context;
+        }else{
+            throw new RuntimeException(context.toString()
+                    + " must implement OnAccountCreation interface");
+        }
     }
 }

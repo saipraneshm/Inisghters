@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,24 +34,37 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.android.humanactivityrecognition.insighters.R;
+import com.android.humanactivityrecognition.insighters.activity.base.ActivityBase;
 import com.android.humanactivityrecognition.insighters.fragment.CreateAccountDialogFragment;
+import com.android.humanactivityrecognition.insighters.helperclasses.ActivityHelper;
+import com.android.humanactivityrecognition.insighters.helperclasses.database.DbManager;
+import com.android.humanactivityrecognition.insighters.model.UserProfileInformation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import io.realm.Realm;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends ActivityBase implements LoaderCallbacks<Cursor>, CreateAccountDialogFragment.OnAccountCreation {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    private static final String REQUEST_SIGN_UP_OPTIONS=  "REQUEST_SIGN_UP_OPTIONS";
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -58,6 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+    private static final String TAG = "LoginActivity";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -68,6 +84,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
 
     public static Intent newIntent(Context context){
@@ -81,6 +99,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ActivityHelper.initialize(this);
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user != null){
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+            }
+        };
 
         //The following code is to set full screen
         View decorView = getWindow().getDecorView();
@@ -122,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 FragmentManager fm = getSupportFragmentManager();
                 CreateAccountDialogFragment dialogFragment =
                         CreateAccountDialogFragment.newIntent(LoginActivity.this);
-                dialogFragment.show(fm,"SIGN_UP_OPTIONS");
+                dialogFragment.show(fm,REQUEST_SIGN_UP_OPTIONS);
             }
         });
 
@@ -180,9 +212,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
+        /*if (mAuthTask != null) {
             return;
-        }
+        }*/
 
         // Reset errors.
         mEmailView.setError(null);
@@ -220,9 +252,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
+          /*  showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            mAuthTask.execute((Void) null);*/
+            showProgressDialog();
+            signWithEmailAndPassword(email,password);
         }
     }
 
@@ -315,6 +349,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    @Override
+    public void saveAccountInformation(UserProfileInformation userProfileInformation) {
+        createNewUsers(userProfileInformation.getEmail(), userProfileInformation.getPassword());
+    }
+
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -382,5 +421,69 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(mAuthListener != null){
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    private void createNewUsers(String email, String password){
+        if(email != null && password != null){
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                    if (!task.isSuccessful()) {
+                        Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+        }
+
+    }
+
+    private void signWithEmailAndPassword(String email, String password){
+        if(email != null && password != null){
+            mAuth.signInWithEmailAndPassword(email,password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            hideProgressDialog();
+                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                            Toast.makeText(LoginActivity.this, "Authentication Success.",
+                                    Toast.LENGTH_SHORT).show();
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                Log.w(TAG, "signInWithEmail", task.getException());
+                                Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+        }
+    }
+
+    private void getCurrentUserInfo(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user!= null){
+            Log.d(TAG, "Email of the current user:" + user.getEmail());
+            Log.d(TAG, "Name:" + user.getDisplayName());
+        }
+    }
 }
+
 

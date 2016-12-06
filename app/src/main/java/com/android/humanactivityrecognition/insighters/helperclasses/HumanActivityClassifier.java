@@ -1,5 +1,6 @@
 package com.android.humanactivityrecognition.insighters.helperclasses;
 
+import android.util.Log;
 
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -8,22 +9,25 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 /**
- * Created by sai pranesh on 29-Nov-16.
+ * Created by sai pranesh on 02-Dec-16.
  */
 
 public class HumanActivityClassifier {
 
-    public static String classifyInstance(Float x, Float y, Float z){
+    //private Instances isTrainingSet;
+
+    public String initialize(Double x, Double y, Double z, WekaWrapper wekaWrapper) {
+
+        //Adding Possible Class Values
+        FastVector fvClassVal = new FastVector(4);
+        fvClassVal.addElement("sit");
+        fvClassVal.addElement("walk");
+        fvClassVal.addElement("fall");
 
         //Adding Attributes
         Attribute Attribute1 = new Attribute("x");
         Attribute Attribute2 = new Attribute("y");
         Attribute Attribute3 = new Attribute("z");
-
-        //Adding Possible Class Values
-        FastVector fvClassVal = new FastVector(2);
-        fvClassVal.addElement("sit");
-        fvClassVal.addElement("walk");
         Attribute ClassAttribute = new Attribute("gt", fvClassVal);
 
         //Creating Vector consisting of all attributes of a sample set
@@ -50,17 +54,20 @@ public class HumanActivityClassifier {
         // add the instance
         isTrainingSet.add(iExample);
 
-        //Initiating the WekaWrapper
-        WekaWrapper wekaWrapper = new WekaWrapper();
+
         try {
+            double result = 0.0;
             //Storing the result of the classified instance in a double value
-            double result = wekaWrapper.classifyInstance(isTrainingSet.instance(0));
+            if(isTrainingSet.firstInstance() != null)
+                result = wekaWrapper.classifyInstance(isTrainingSet.instance(0));
 
             //Returning the value as string.
+            Log.d("RESULT", isTrainingSet.instance(0).classAttribute().value((int)result));
             return isTrainingSet.instance(0).classAttribute().value((int)result);
         } catch (Exception e) {
             e.printStackTrace();
-            return "na";
+            return "exception";
         }
-    }
+
+    }//end initialize
 }

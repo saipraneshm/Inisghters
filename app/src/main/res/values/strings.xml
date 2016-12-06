@@ -28,5 +28,6 @@
     <string name="last_name">Last Name</string>
     <string name="submit">SUBMIT</string>
     <string name="cancel_button">CANCEL</string>
+    <string name="loading">Loading</string>
 
 </resources>

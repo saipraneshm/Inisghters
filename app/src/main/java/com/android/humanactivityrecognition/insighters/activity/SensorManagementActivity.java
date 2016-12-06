@@ -1,4 +1,4 @@
-package com.android.humanactivityrecognition.insighters.helperclasses;
+package com.android.humanactivityrecognition.insighters.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -22,6 +22,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.humanactivityrecognition.insighters.R;
+import com.android.humanactivityrecognition.insighters.helperclasses.HumanActivityClassifier;
+import com.android.humanactivityrecognition.insighters.helperclasses.WekaWrapper;
 import com.android.humanactivityrecognition.insighters.model.SensorInformation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,8 +33,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 /*import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;*/
 
@@ -173,7 +173,7 @@ public class SensorManagementActivity extends AppCompatActivity implements View.
                 meanValuesList.put("y", mMeanY);
                 meanValuesList.put("z", mMeanZ);
 
-                HumanActivityClassifierAnisha h = new HumanActivityClassifierAnisha();
+                HumanActivityClassifier h = new HumanActivityClassifier();
                 String result = h.initialize(mMeanX, mMeanY, mMeanZ, new WekaWrapper());
                 tvClassify.setText(result);
 
